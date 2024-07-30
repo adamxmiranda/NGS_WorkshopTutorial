@@ -1,3 +1,5 @@
+<link href="Style.css" rel="stylesheet"></.>
+
 # NGS Workshop Tutorial
 
 A Resource for the Guo Lab and future NGS analysis
@@ -66,7 +68,7 @@ The output of this stage is a .sam file, which is an uncompressed .bam file.
 
 ##### Counting
 
-This step is where mapped reads are counted to different gene transcripts. For example, a read that maps to exon 1 of "gene A" and another read that maps to exon 2 of "gene A" will lead to a count of 2 reads for "gene A" in that sample. For this step I like to use the featureCounts function of the Subread package.
+This step is where mapped reads are counted to different gene transcripts. For example, a read that maps to exon 1 of "gene A" and another read that maps to exon 2 of "gene A" will lead to a count of 2 reads for "gene A" in that sample. For this step I like to use the featureCounts function of the Subread package (https://subread.sourceforge.net/featureCounts.html).
 
 Example usage:
 
@@ -82,3 +84,29 @@ featureCounts -F GTF -a /gencode.v32.annotation.gtf -G /data/hg38_genome/hg38.fa
 ```
 
 The output of this step is a counts matrix. For some datasets you access publicly, you may be able to start with the counts matrix, which will save you a lot of time.
+
+General Format of Counts matrix:
+
+|  | Sample 1 | Sample 2   | Sample 3   | ...|
+|----------|------------|------------|------------|------------|
+| Gene A   | # of reads | # of reads | # of reads | # of reads |
+| Gene B   | # of reads | # of reads | # of reads | # of reads |
+| Gene C   | # of reads | # of reads | # of reads | # of reads |
+| ...   | # of reads | # of reads | # of reads | # of reads |
+
+##### Differential Expression Analysis
+
+Generally in RNA-seq, you are comparing two groups of samples or technical replicates. The goal of differential expression analysis is to determine genes with divergent expression pattens between the two groups in the comparison.
+
+The package I use for diferential sequencing analysis is DESeq2 (https://bioconductor.org/packages/release/bioc/html/DESeq2.html).
+
+The following analyses will all be conducted in R. Recommended active packages below.
+
+``` R
+library(tidyverse) #ideal for general data cleaning
+library(DESeq2) # package for Differential expression analyses
+library(biomaRt) # package for converting gene IDs
+library(org.Hs.eg.db) # package containing human transcripts,
+                      #there are different versions for different genomes
+```
+###### Loading in counts matrix
