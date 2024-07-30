@@ -1,6 +1,6 @@
-# ATAC-sequence
+# ATAC-seq
 
-The goal of ATAC-seq is to evaluate the level of accessibility throughout the genome in a population of cells. ATAC-seq relies on a transposase enzyme called Tn5 to selectively excise accessible regions of chromatin within a cell's nucleus. This excised chromatin is then used to form a sequencing library in which read peaks will denote regions of high accessibility.
+The goal of ATAC-seq is to evaluate the level of accessibility throughout the genome in a population of cells. Accessible chromatin is associated with actively transcribed regions of the genome and sites bound by transcription factors. ATAC-seq relies on a transposase enzyme called Tn5 to selectively excise accessible regions of chromatin within a cell's nucleus. This excised chromatin is then used to form a sequencing library in which read peaks will denote regions of high accessibility.
 
 ![image](../images/HowATACseq.png)
 
@@ -13,11 +13,11 @@ In bash:
 * Trimming and Quality control
 * Mapping (.fastq &rarr; .sam/.bam files)
 * Peak Calling (.bam file &rarr; .bed files)
-
 * Intersecting .bed files
+* Footprinting
+* Gene Calling
 
 In R:
-* Differential Accessibility Analysis
 * Plotting
 
 ### Trimming and Quality control
@@ -98,9 +98,9 @@ For peak calling I use Genrich (https://github.com/jsh58/Genrich)
 example code for peak calling:
 ``` bash
 Genrich -t ${IN_DIR}/${base}.n-sorted.bam \
-          -o ${OUT_DIR}/${base}_filtered_0.1.narrowPeak \
-          -f ${OUT_DIR}/${base}_filtered_0.1.pqvalues.bed \
-          -r -p 0.1 -v -j -e chrX,chrY \ # this removes the sex chromosomes, which you may want to do
+          -o ${OUT_DIR}/${base}_filtered_0.05.narrowPeak \
+          -f ${OUT_DIR}/${base}_filtered_0.05.pqvalues.bed \
+          -r -p 0.05 -v -j -e chrX,chrY \ # this removes the sex chromosomes, which you may want to do
 
 ```
 
@@ -108,9 +108,66 @@ The output of this code are the narrowPeak and bed files. These files are contai
 
 general format of a bed file:
 
-|  | Sample 1 | Sample 2   | Sample 3   | ...|
-|----------|------------|------------|------------|------------|
-| Gene A   | # of reads | # of reads | # of reads | # of reads |
-| Gene B   | # of reads | # of reads | # of reads | # of reads |
-| Gene C   | # of reads | # of reads | # of reads | # of reads |
-| ...   | # of reads | # of reads | # of reads | # of reads |
+| Chromosome | Start | End  | Other metadata...
+|----------|------------|------------| ------------|
+| Chr1   | bp # | bp #|...|
+| Chr1    | bp # | bp #|...|
+| Chr1    | bp # | bp #|...|
+
+### Peak Intersecting
+
+Peak intersecting is the process by which you identify the overlap of two different peaks. This is a key process in ATAC-seq analysis since you often want to identify the regions of accessiblity that are common between samples, or unique to samples.
+
+Often times when accessing an ATAC-seq dataset, you will start with .bed or narrowPeak files. This means you can skip the previous steps.
+
+All of these processes are largely handled by bedTools (https://bedtools.readthedocs.io/en/latest/index.html)
+
+I won't go into too much detail as bedTools is very well documented and the types of processes are going to be very dependent on your purposes.
+
+example code:
+``` bash
+bedtools intersect -a path/to/ETV5_MA0765.2_GSM3593802_HCT116_R1_Omni-ATAC_bound.bed \
+    -b path/to/ETV5_MA0765.2_GSM3593803_HCT116_R2_Omni-ATAC_bound.bed \
+    > path/to/ETV5_bound_intersect.bed
+```
+
+
+### Footprinting
+
+Footprinting is a process by which you can identify potential binding sites of proteins in accessible regions of chromatin. This works by looking for slight dips in accessibility within accessible regions to infer where protein binding may be taking place.
+
+As a preparation step  for this process, I use deeptools (https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html)to convert bam files to bigwig files (if I don't already have access to bigwig files.)
+
+deeptools bigwig conversion:
+```bash
+bamCoverage -b reads.bam -o coverage.bw
+```
+For the actual Footprinting I use TOBIAS (https://github.com/loosolab/TOBIAS)
+
+example code:
+``` bash
+#This first step identifies footprint sties within accessible regions
+TOBIAS FootprintScores --signal ${base}.bw \ #input file
+  --regions ../clean_cistromeATAC.txt \ # here you can specify called peaks to limit the parameters of the footprint search
+  --output ${base}_footprints.bw \
+  --cores 4
+
+#This step searches the footprint file for motifs to identify potential TF binding partners
+#I use the JASPAR database file to identify motif sequences for transcription factors
+TOBIAS BINDetect --motifs /path/to/JASPARfile/JASPAR2020_CORE_vertebrates_non-redundant_pfms_jaspar.txt \
+  --signals ${base}_footprints.bw \
+  --genome /path/to/human_genome/hg19.fa \
+  --peaks ../clean_cistromeATAC.txt \
+  --outdir ./motifs_${base} \
+  --cond_names ${base} \
+  --cores 4
+```
+This code will output a directory of results for each of the transcription factors within your chosen motif file. There will be individual bed files for each transcription factor.
+
+### Gene Calling
+
+For nearest neighbor gene annotation, GREAT (http://great.stanford.edu/public/html/) is a good tool. The input for this tool is a bed file. The output is genes near to the given peaks. This list of genes can be used for gene ontology to get an idea of what gene pathways may be affected or regulated by the accessible chromatin.
+
+
+## Plotting
+A combined plotting file will be included in a separate directory
