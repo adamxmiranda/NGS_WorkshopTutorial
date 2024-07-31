@@ -72,3 +72,7 @@ General Format of Counts matrix:
 | Gene B   | # of reads | # of reads | # of reads | # of reads |
 | Gene C   | # of reads | # of reads | # of reads | # of reads |
 | ...   | # of reads | # of reads | # of reads | # of reads |
+
+### Bigwig
+
+This file type represents the coverage of the genome continuously. Great for the visualization of sequencing data as a continuous histogram.
