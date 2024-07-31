@@ -71,7 +71,11 @@ repair.sh in1=${base}_trimmed.fq in2=${base}_trimmed.fq \
 
 bwa mem -t $CPU $REF ${IN_DIR}/${base}_Mate1_repaired.fq ${IN_DIR}/${base}_Mate2_repaired.fq| \
 samtools view -@ $CPU -Sb > ${OUT_DIR}/${base}_bwa.bam
+```
 
+Filtering code:
+
+``` bash
 # Filter out low quality reads and reads mapped to black list sites and mitochondria
 samtools view -@ $CPU -S -b -q 40 ${base}_bwa.bam > ${base}_bwa_mapq40.bam
 samtools sort -@ $CPU -o ${base}_bwa_mapq40_sorted.bam ${base}_bwa_mapq40.bam
@@ -166,7 +170,7 @@ This code will output a directory of results for each of the transcription facto
 
 ### Gene Calling
 
-For nearest neighbor gene annotation, GREAT (http://great.stanford.edu/public/html/) is a good tool. The input for this tool is a bed file. The output is genes near to the given peaks. This list of genes can be used for gene ontology to get an idea of what gene pathways may be affected or regulated by the accessible chromatin.
+For nearest neighbor gene annotation, GREAT (http://great.stanford.edu/public/html/) is a good tool. The input for this tool is a bed file. The output is genes near to the given peaks. There is an R package version of this tool, rGREAT (https://github.com/jokergoo/rGREAT). Results do differ between the web app and the R package. This list of genes can be used for your choice of gene ontology to get an idea of what gene pathways may be affected or regulated by the accessible chromatin.
 
 
 ## Plotting

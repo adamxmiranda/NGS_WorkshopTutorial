@@ -4,6 +4,8 @@ The goal of ChIP-seq is to evaluate the location and degree of binding of a sing
 
 ![image](../images/ChIPsequencing.png)
 
+Biorender template by Samara Ona
+
 ## Analytical Workflow
 If starting with raw fastq files, start at the beginning. If starting with different files, start with the appropriate step. I have added the file extensions to each step to give you an idea of where you might be in the process.
 
@@ -38,10 +40,19 @@ In R:
 
 ***These processes are largely the same in principle to ATAC-seq.***
 
+See the ATAC-seq readme for the above tutorials.
+
 ### ChIPseeker Package
 
-(https://www.bioconductor.org/packages/devel/bioc/html/ChIPseeker.html#since)
+(https://www.bioconductor.org/packages/devel/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html)
 
 Can annotate genomic location relative to gene transcripts
 
-inputting a bed file you can create venn diagrams or bar charts representing the relative proportion of sequences in different relationships to transcripts.
+Inputting a bed file you can create venn diagrams or bar charts representing the relative proportion of sequences in different relationships to transcripts.
+
+The package link is well documented. See above
+
+ChIPseeker can also be used to for gene annotations using similar nearest neighbor strategies. I just prefer GREAT for these purposes.
+
+## Plotting
+A combined plotting file will be included in a separate directory
