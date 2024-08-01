@@ -56,6 +56,8 @@ Keep in mind that mapping is a computationally intensive process and will likely
 
 The output of this stage is a .sam file, which is an uncompressed .bam file.
 
+For the purposes of genomic track plotting, RNA-seq is generally plotted as a bigwig file histogram. To generate the bigwig file, deeptools (https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html) can be used to convert bam files to bigwig files (if I don't already have access to bigwig files.)
+
 ### Counting
 
 This step is where mapped reads are counted to different gene transcripts. For example, a read that maps to exon 1 of "gene A" and another read that maps to exon 2 of "gene A" will lead to a count of 2 reads for "gene A" in that sample. For this step I like to use the featureCounts function of the Subread package (https://subread.sourceforge.net/featureCounts.html).
@@ -99,4 +101,23 @@ library(biomaRt) # package for converting gene IDs
 library(org.Hs.eg.db) # package containing human transcripts,
                       #there are different versions for different genomes
 ```
-#### Loading in counts matrix
+
+#### Updating gene symbol names from Ensembl IDs
+
+Just a generally helpful bit of code.
+
+``` R
+#add gene symbols
+EnsemblVector <- rownames(CountsMatrix_df)
+CountsMatrix_df$geneID <- EnsemblVector
+mart <- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
+genes <- EnsemblVector
+G_list <- getBM(filters= "ensembl_gene_id",
+                attributes= c("ensembl_gene_id","hgnc_symbol"),
+                values=genes,mart= mart,
+               useCache = FALSE)
+CountsMatrix_df <- merge(CountsMatrix_df,
+                               G_list,
+                               by.x="geneID",
+                               by.y="ensembl_gene_id")
+```
