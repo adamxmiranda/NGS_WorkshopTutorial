@@ -1,6 +1,6 @@
 # ATAC-seq
 
-The goal of ATAC-seq is to evaluate the level of accessibility throughout the genome in a population of cells. Accessible chromatin is associated with actively transcribed regions of the genome and sites bound by transcription factors. ATAC-seq relies on a transposase enzyme called Tn5 to selectively excise accessible regions of chromatin within a cell's nucleus. This excised chromatin is then used to form a sequencing library in which read peaks will denote regions of high accessibility.
+The goal of ATAC-seq is to evaluate the level of accessibility throughout the genome in a population of cells. Accessible chromatin is associated with actively transcribed regions of the genome and sites bound by transcription factors. ATAC-seq relies on a transposase enzyme called Tn5 to selectively excise accessible regions of chromatin within a cell's nucleus. This excised chromatin is then used to form a sequencing library in which read peaks will denote regions of high accessibility. DNase I hypersensitivity sequencing is a similar technique that has become a bit obsolete, but many data sets of interest will have used this technique. The analysis of these experiments is mostly similar.
 
 ![image](../images/HowATACseq.png)
 
