@@ -49,6 +49,8 @@ general format of a bed file:
 | Chr1    | bp # | bp #|...|
 
 
+For SNP data, a bed file can be created by adding a single bp to the position of the snp coordinate. This will make bedtools intersects with snp data quite easy.
+
 ### BEDPE
 
 This file type shows a paired range of coordinates. Usually created for/from HiC experiments to show interacting loci.

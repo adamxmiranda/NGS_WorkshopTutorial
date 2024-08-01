@@ -51,5 +51,4 @@ Generation of the interaction matrix and other functions can be performed using 
 hicBuildMatrix --samFiles PairedMate1.sam PairedMate2.sam --QCfolder /path/to/QCdir --binSize ${binsize} \ # This is used to refine the resolution of the matrix, smaller values have greater resolution
 --restrictionSequence AAGCTT \ # this is used if the restriction enzyme is known
 --outBam /path/to/bp_matrix.bam -o /path/to/${prefix}_${binsize}bp_matrix.h5
-
 ```
