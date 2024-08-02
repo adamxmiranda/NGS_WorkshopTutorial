@@ -6,6 +6,14 @@ The goal of ChIP-seq is to evaluate the location and degree of binding of a sing
 
 Biorender template by Samara Ona
 
+*** Note on the histone code***
+
+These key histone markers are important to know for their correlated function and common use.
+
+- H3K27ac (Histone 3, Lysine 27; acetylation) - A mark associated with actively transcribed promoter/enhancer activity.
+- H3K4me1 (Histone 3, Lysine 4; monomethylation) - A mark associated with active enhancer activity
+- H3K27me3 (Histone 3, Lysine 27; trimethylation) - A mark associated with heterochromatin and inactive regions of the genome
+
 ## Analytical Workflow
 If starting with raw fastq files, start at the beginning. If starting with different files, start with the appropriate step. I have added the file extensions to each step to give you an idea of where you might be in the process.
 
